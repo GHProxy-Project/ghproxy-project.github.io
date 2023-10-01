@@ -20,14 +20,30 @@
         box-sizing: border-box;
     }
 
+    a:visited {
+        color: #7b7b7b;
+    }
+
     p {
         word-break: break-all;
     }
 
     @media (max-width: 500px) {
-        h1 {
+        .title {
             margin-top: 80px;
         }
+
+        .main {
+            flex-direction: column;
+        }
+
+        .btn {
+            margin-top: 20px;
+        }
+    }
+
+    .title {
+        font-size: xx-large;
     }
 
     .flex {
@@ -37,75 +53,64 @@
         align-items: center;
     }
 
+    .main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .block {
         display: block;
         position: relative;
+        height: min-content;
+        border-radius: 30px;
+        border: 1px solid #222222;
     }
 
     .url {
-        font-size: 18px;
-        padding: 10px 10px 10px 5px;
+        font-size: smaller;
+        padding: 10px 10px 10px 10px;
         position: relative;
         width: 300px;
         border: none;
-        border-bottom: 1px solid #bfbfbf;
     }
 
     input:focus {
         outline: none;
     }
 
-    .bar {
-        content: '';
-        height: 2px;
-        width: 100%;
-        bottom: 0;
-        position: absolute;
-        background: #00bfb3;
-        transition: 0.2s ease transform;
-        -moz-transition: 0.2s ease transform;
-        -webkit-transition: 0.2s ease transform;
-        transform: scaleX(0);
-    }
-
-    .url:focus ~ .bar {
-        transform: scaleX(1);
-    }
-
     .btn {
         line-height: 38px;
-        background-color: #00bfb3;
+        background-color: #222222;
         color: #fff;
         white-space: nowrap;
         text-align: center;
-        font-size: 14px;
+        font-size: smaller;
         border: none;
-        border-radius: 2px;
+        border-radius: 30px;
         cursor: pointer;
-        padding: 5px;
-        width: 160px;
-        margin: 30px 0;
+        padding: 0 5px;
+        width: 100px;
+        margin-left: 20px;
+    }
+
+    .desc {
+        border-radius: 20px;
+        background-color: #fafafa;
+        margin-top: 50px;
+        padding: 15px;
     }
 
     .tips, .example {
         color: #7b7b7b;
+        font-size: small;
         position: relative;
         align-self: flex-start;
-        margin-left: 7.5em;
     }
 
-    .tips > p:first-child::before {
-        position: absolute;
-        left: -3em;
-        /*         content: 'PS：'; */
-        color: #7b7b7b
-    }
-
-    .example > p:first-child::before {
-        position: absolute;
-        left: -7.5em;
-        content: '合法输入示例：';
-        color: #7b7b7b
+    .bottom {
+        font-size: xx-small;
+        color: #7b7b7b;
     }
 </style>
 <head>
@@ -122,28 +127,30 @@
     <title>GitHub 文件加速</title>
 </head>
 <body class="flex">
-<h1 style="margin-bottom: 50px">GitHub 文件加速</h1>
+<div class="title" style="margin-bottom: 50px">GitHub 文件加速</div>
 <form action="./" method="get" style="padding-bottom: 40px" target="_blank" class="flex" onsubmit="toSubmit(event)">
-    <label class="block" style="width: fit-content">
-        <input class="block url" name="q" type="text" placeholder="输入Github文件链接"
-               pattern="^((https|http):\/\/)?(github\.com\/.+?\/.+?\/(?:releases|archive|blob|raw|suites)|((?:raw|gist)\.(?:githubusercontent|github)\.com))\/.+$"
-               required>
-        <div class="bar"></div>
-    </label>
-    <input class="block btn" type="submit" value="下载">
-    <div class="tips"><p>
-        GitHub文件链接带不带协议头都可以，支持release、archive以及文件，右键复制出来的链接都是符合标准的。</p>
-        <!--        <p>release、archive使用cf加速，文件会跳转至JsDelivr</p>-->
-        <p>注意，不支持项目文件夹</p></div>
-    <div class="example">
-        <p>分支源码：https://github.com/hunshcn/project/archive/master.zip</p>
-        <p>release源码：https://github.com/hunshcn/project/archive/v0.1.0.tar.gz</p>
-        <p>release文件：https://github.com/hunshcn/project/releases/download/v0.1.0/example.zip</p>
-        <p>分支文件：https://github.com/hunshcn/project/blob/master/filename</p>
+    <div class="main">
+        <label class="block" style="width: fit-content">
+            <input class="block url" name="q" type="text" placeholder="输入GitHub文件链接"
+                   pattern="^((https|http):\/\/)?(github\.com\/.+?\/.+?\/(?:releases|archive|blob|raw|suites)|((?:raw|gist)\.(?:githubusercontent|github)\.com))\/.+$"
+                   required>
+        </label>
+        <input class="block btn" type="submit" value="下载">
+    </div>
+    <div class="desc">
+        <div class="tips">
+            <p>GitHub 文件、Releases、archive、gist、raw.githubusercontent.com 文件代理加速下载服务。</p>
+            <p>支持 raw.githubusercontent.com、gist.github.com、gist.githubusercontent.com 文件下载。</p>
+            <p>支持终端命令行 git clone、wget、curl 等工具下载。</p>
+            <p style="color: indianred">* 注意，不支持项目文件夹；不支持 SSH Key 方式 git clone 下载</p>
+        </div>
+        <div class="example">
+        </div>
     </div>
 </form>
-<p style="position: sticky;top: calc(100% - 2.5em);">项目开源于GitHub <a style="color: #3294ea"
-                                                                         href="https://github.com/hunshcn/gh-proxy">hunshcn/gh-proxy</a>
+<p class="bottom" style="position: sticky;top: calc(100% - 2.5em);">GitHub: <a style="text-decoration: none"
+                                                                               target="_blank"
+                                                                               href="https://github.com/hunshcn/gh-proxy">hunshcn/gh-proxy</a>
 </p>
 </body>
 </html>
