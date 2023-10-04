@@ -1,170 +1,290 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-    }
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=0">
+    <title>GitHub 文件加速</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:700" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
 
-    html, body {
-        width: 100%;
-    }
+        html, body {
+            width: 100%;
+        }
 
-    html {
-        height: 100%;
-    }
+        a {
+            text-decoration: none;
+            color: rgb(0, 47, 167);
+        }
 
-    body {
-        min-height: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-    }
+        a:visited {
+            color: rgb(0, 47, 167);
+        }
 
-    a:visited {
-        color: #7b7b7b;
-    }
-
-    p {
-        word-break: break-all;
-    }
-
-    @media (max-width: 500px) {
-        .title {
-            margin-top: 80px;
+        body {
+            box-sizing: border-box;
+            background-color: #fff;
+            font-family: "Open Sans", sans-serif !important;
         }
 
         .main {
+            height: 100vh;
+            display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
-        .btn {
-            margin-top: 20px;
+        .operation {
+            width: 100%;
+            max-width: 550px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-    }
 
-    .title {
-        font-size: xx-large;
-    }
-
-    .flex {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .main {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .block {
-        display: block;
-        position: relative;
-        height: min-content;
-        border-radius: 30px;
-        border: 1px solid #222222;
-    }
-
-    .url {
-        font-size: smaller;
-        padding: 10px 10px 10px 10px;
-        position: relative;
-        width: 300px;
-        border: none;
-    }
-
-    input:focus {
-        outline: none;
-    }
-
-    .btn {
-        line-height: 38px;
-        background-color: #222222;
-        color: #fff;
-        white-space: nowrap;
-        text-align: center;
-        font-size: smaller;
-        border: none;
-        border-radius: 30px;
-        cursor: pointer;
-        padding: 0 5px;
-        width: 100px;
-        margin-left: 20px;
-    }
-
-    .desc {
-        border-radius: 20px;
-        background-color: #fafafa;
-        margin-top: 50px;
-        padding: 15px;
-    }
-
-    .tips, .example {
-        color: #7b7b7b;
-        font-size: small;
-        position: relative;
-        align-self: flex-start;
-    }
-
-    .bottom {
-        font-size: xx-small;
-        color: #7b7b7b;
-    }
-</style>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=0">
-    <script>
-        function toSubmit(e) {
-            e.preventDefault()
-            window.open(location.href.substr(0, location.href.lastIndexOf('/') + 1) + document.getElementsByName('q')[0].value);
-            return false
+        .input-wrap {
+            width: 100%;
+            height: 40px;
+            border: 4px solid #24292f;
+            border-radius: 100px;
+            padding: 5px;
+            margin-top: 60px;
+            display: flex;
+            align-items: center;
         }
-    </script>
-    <title>GitHub 文件加速</title>
+
+        .input-label {
+            flex-grow: 1;
+        }
+
+        .input-label input {
+            width: calc(100% - 10px);
+            height: 100%;
+            border: none;
+            padding: 0 5px;
+            font-size: large;
+        }
+
+        .input-label input:focus {
+            outline: none;
+        }
+
+        .input-btn {
+            width: 40px;
+            height: 100%;
+            background-color: #24292f;
+            color: white;
+            border-radius: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .scroll-indicator-wrap {
+            height: 15vh;
+        }
+
+        .scroll-anim {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+
+        .chevron {
+            position: absolute;
+            width: 28px;
+            height: 8px;
+            opacity: 0;
+            transform: scale3d(0.5, 0.5, 0.5);
+            animation: move 3s ease-out infinite;
+        }
+
+        .chevron:first-child {
+            animation: move 3s ease-out 1s infinite;
+        }
+
+        .chevron:nth-child(2) {
+            animation: move 3s ease-out 2s infinite;
+        }
+
+        .chevron:before,
+        .chevron:after {
+            content: ' ';
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 51%;
+            background: #24292f;
+        }
+
+        .chevron:before {
+            left: 0;
+            transform: skew(0deg, 30deg);
+        }
+
+        .chevron:after {
+            right: 0;
+            width: 50%;
+            transform: skew(0deg, -30deg);
+        }
+
+        .info {
+            background-color: #24292f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-wrap {
+            width: 100%;
+            max-width: 750px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .info-wrap .title {
+            font-size: xxx-large;
+            color: white;
+            border: 4px solid transparent;
+        }
+
+        .info-wrap .card {
+            width: 100%;
+            background-color: white;
+            color: #474c52;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .info-wrap .example {
+            word-break: break-all;
+            font-size: smaller;
+            margin-left: 22px;
+            color: #939598;
+        }
+
+        .info-wrap li {
+            margin-top: 10px;
+        }
+
+        @keyframes move {
+            25% {
+                opacity: 1;
+
+            }
+            33% {
+                opacity: 1;
+                transform: translateY(30px);
+            }
+            67% {
+                opacity: 1;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(55px) scale3d(0.5, 0.5, 0.5);
+            }
+        }
+
+        @keyframes pulse {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .operation {
+                width: 90%;
+                max-width: initial;
+            }
+
+            .info-wrap {
+                width: calc(100% - 50px);
+                max-width: initial;
+            }
+
+            .info-wrap .title {
+                font-size: xx-large;
+            }
+
+            .info-wrap .card {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
-<body class="flex">
-<div class="title" style="margin-bottom: 50px">GitHub 文件加速</div>
-<form action="./" method="get" style="padding-bottom: 40px" target="_blank" class="flex" onsubmit="toSubmit(event)">
-    <div class="main">
-        <label class="block" style="width: fit-content">
-            <input class="block url" name="q" type="text" placeholder="输入GitHub文件链接"
-                   pattern="^((https|http):\/\/)?(github\.com\/.+?\/.+?\/(?:releases|archive|blob|raw|suites)|((?:raw|gist)\.(?:githubusercontent|github)\.com))\/.+$"
-                   required>
-        </label>
-        <input class="block btn" type="submit" value="下载">
+<body>
+<div class="main">
+    <div class="operation">
+        <svg width="98" height="96" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                  fill="#24292f"/>
+        </svg>
+        <form class="input-wrap">
+            <label class="input-label">
+                <input name="q" type="text" placeholder="输入 GitHub 文件链接"
+                       autocomplete="new-password"
+                       pattern="^((https|http):\/\/)?(github\.com\/.+?\/.+?\/(?:releases|archive|blob|raw|suites)|((?:raw|gist)\.(?:githubusercontent|github)\.com))\/.+$"
+                       onsubmit="toSubmit(event)"
+                       required>
+            </label>
+            <button class="input-btn" type="submit">→</button>
+        </form>
     </div>
-    <div class="desc">
-        <div class="tips">
-            <p>GitHub 文件、Releases、archive、gist、raw.githubusercontent.com 文件代理加速下载服务。</p>
-            <p>支持 raw.githubusercontent.com、gist.github.com、gist.githubusercontent.com 文件下载。</p>
-            <p>支持终端命令行 git clone、wget、curl 等工具下载。</p>
-            <p style="color: indianred">* 注意，不支持项目文件夹和 SSH Key 方式 git clone 下载</p>
-        </div>
-        <div class="example">
-        </div>
-    </div>
-    <div class="desc">
-        <div class="tips">
-            <p>推荐一个<span style="color: indianred">晚高峰 4K/8K 非常稳定</span>的 <span
-                    style="color: indianred">IPLC</span> 机场，节点全部<span style="color: indianred">解锁流媒体和 ChatGPT</span>。如果你有需求
-            </p>
-            <p>同时愿意支持本站，可以通过
-                <a style="text-decoration: none; color: royalblue"
-                   href="https://dog.ssrdog111.com/#/register?code=cK2cki3K"
-                   target="_blank">推广链接</a> 购买。</p>
+    <div class="scroll-indicator-wrap">
+        <div class="scroll-anim">
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+            <div class="chevron"></div>
         </div>
     </div>
-</form>
-<p class="bottom" style="position: sticky;top: calc(100% - 2.5em);">
-    <a style="text-decoration: none; margin-right: 20px" target="_blank" href="https://icp.gov.moe/?keyword=20234442">萌ICP备20234442号</a>
-    GitHub: <a style="text-decoration: none" target="_blank"
-               href="https://github.com/hunshcn/gh-proxy">hunshcn/gh-proxy</a>
-</p>
+</div>
+<div class="info">
+    <div class="info-wrap">
+        <div class="title">GitHub 文件代理加速</div>
+        <div class="card">
+            推荐一个晚高峰 4K/8K 非常稳定的 IPLC 机场，节点全部解锁流媒体和 ChatGPT。如果你有需求同时愿意支持本站，可以通过
+            <a
+                    href="https://dog.ssrdog111.com/#/register?code=cK2cki3K"
+                    target="_blank">推广链接</a> 购买。
+        </div>
+        <div class="card">
+            <ul style="list-style-position: inside">
+                <li style="margin-top: -10px">支持 Releases、archive、gist、raw 文件代理加速下载</li>
+                <li>
+                    支持终端命令行 git clone、wget、curl 等工具下载
+                    <p class="example">
+                        例: git clone <a>https://ghproxy.xyz/</a>https://github.com/github/training-kit
+                    </p>
+                </li>
+                <li>
+                    支持 git clone 私有仓库（私有仓库需要用户在 Personal access tokens 申请 Token 配合使用）
+                    <p class="example">
+                        例: git clone <a>https://user:your_token@ghproxy.xyz/</a>https://github.com/your_name/your_private_repo
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
+<script>
+    function toSubmit(e) {
+        e.preventDefault()
+        window.open(location.href.substring(0, location.href.lastIndexOf('/') + 1) + document.getElementsByName('q')[0].value);
+        return false
+    }
+</script>
 <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
 <script>LA.init({id: "KCxqX5PYirPDLg6h", ck: "KCxqX5PYirPDLg6h"})</script>
 </body>
